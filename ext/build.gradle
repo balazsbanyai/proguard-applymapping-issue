@@ -1,0 +1,22 @@
+dependencies {
+    compile project(":core")
+}
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    proguard.gradle.ProGuardTask dependencyProguardTask = project(':core').tasks['proguard']
+    Jar dependencyJarTask = project(':core').tasks['jar']
+    dependsOn jar
+    dependsOn dependencyProguardTask
+
+    libraryjars "${System.properties.'java.home'}/lib/rt.jar"
+    injars jar.archivePath
+    outjars jar.archivePath.getPath().replace(jar.archivePath.getName(), jar.baseName + "-obfuscated.jar")
+
+    printmapping jar.archivePath.getPath().replace(jar.archivePath.getName(), "mapping.txt")
+
+    libraryjars dependencyJarTask.outputs
+    applymapping dependencyJarTask.archivePath.getPath().replace(dependencyJarTask.archivePath.getName(), "mapping.txt")
+
+    keep allowobfuscation: true, 'class com.example.** { *; }'
+    keep 'class com.example.MyLibraryExtension { *; }'
+}

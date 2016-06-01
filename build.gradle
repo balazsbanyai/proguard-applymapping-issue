@@ -1,0 +1,13 @@
+buildscript {
+    repositories {
+        flatDir dirs: 'proguard'
+    }
+
+    dependencies {
+        classpath ':proguard'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+}
